@@ -1,0 +1,24 @@
+{
+  "name": "map-cachedfifo",
+  "version": "0.0.0",
+  "description": "FIFO Cached interface for a Promised Map.",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wolfram77/node-mapcachedfifo.git"
+  },
+  "keywords": [
+    "map",
+    "cached",
+    "fifo"
+  ],
+  "author": "wolfram77@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wolfram77/node-mapcachedfifo/issues"
+  },
+  "homepage": "https://github.com/wolfram77/node-mapcachedfifo#readme"
+}
