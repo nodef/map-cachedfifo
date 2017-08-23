@@ -1,4 +1,4 @@
-var $ = function MapCacheFifo(src, cap, evict) {
+var $ = function MapCachedFifo(src, cap, evict) {
   this._src = src;
   this._size = -1;
   this._cap = cap||1024;
@@ -6,6 +6,7 @@ var $ = function MapCacheFifo(src, cap, evict) {
   this._map = new Map();
   this._set = new Map();
 };
+module.exports = $;
 
 var _ = $.prototype;
 
@@ -17,7 +18,7 @@ Object.defineProperty(_, 'size', {'get': function() {
 _.flush = function() {
   var a = [];
   for(var [k, v] of this._set)
-    a.push(this._src.set(k, v));
+    a.push(v===undefined? this._src.delete(k) : this._src.set(k, v));
   this._set.clear();
   return Promise.all(a);
 };

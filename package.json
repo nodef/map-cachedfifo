@@ -1,6 +1,6 @@
 {
   "name": "map-cachedfifo",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "FIFO Cached interface for a Promised Map.",
   "main": "index.js",
   "scripts": {
