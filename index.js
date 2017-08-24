@@ -80,6 +80,7 @@ _.valueOf = function() {
   if(this._num===this._size) return Promise.resolve(this._map);
   this.flush().then(() => this._src.valueOf().then((ans) => {
     this._map = ans;
+    this._num = ans.size;
     this._size = ans.size;
     return ans;
   }));
