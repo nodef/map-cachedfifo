@@ -2,6 +2,7 @@ var $ = function MapCachedFifo(src, cap, evict) {
   this._src = src;
   this._size = -1;
   this._cap = cap||1024;
+  this._buf = 0.5*this._cap;
   this._evict = evict||0.5;
   this._map = new Map();
   this._set = new Map();
@@ -12,40 +13,40 @@ var _ = $.prototype;
 
 Object.defineProperty(_, 'size', {'get': function() {
   if(this._size>=0) return Promise.resolve(this._size);
-  return this._src.size().then((ans) => this._size = ans);
+  return this.flush().then(() => this._src.size).then((ans) => this._size = ans);
 }});
 
 _.flush = function() {
-  var a = [];
-  for(var [k, v] of this._set)
+  var a = [], I = n||this._set.size;
+  for(var [k, v] of this._set) {
     a.push(v===undefined? this._src.delete(k) : this._src.set(k, v));
+    if(++i>=I) break;
+  }
   this._set.clear();
-  return Promise.all(a);
+  return Promise.all(a).then(() => i);
 };
 
-_.evict = function() {
-  return this.flush().then(() => {
-    var i = 0, I = this._evict*this._map.size;
-    for(var [k, v] of this._map) {
-      if(i++>=I) break;
-      this._map.delete(k);
-    }
-    return this;
-  });
+_.evict = function(n) {
+  var i = 0, I = n||this._evict*this._map.size;
+  for(var [k, v] of this._map) {
+    if(this._set.has(k)) continue;
+    this._map.delete(k);
+    if(++i>=I) break;
+  }
+  return Promise.resolve(i);
 };
 
 _.set = function(k, v) {
-  if(v===undefined) this._map.delete(k);
-  else this._map.set(k, v);
+  this._map.set(k, v);
   this._set.set(k, v);
-  return Promise.resolve(this);
+  if(this._map.size>=this._cap) this.evict();
+  if(this._set.size>=this._buf) this.flush();
+  return Promise.resolve(v);
 };
 
 _.get = function(k) {
-  var v = this._map.get(k);
-  if(v!==undefined || this._map.size===this._size) return Promise.resolve(v);
+  if(this._map.has(k) || this._map.size===this._size) return Promise.resolve(this._map.get(k));
   return this._src.get(k).then((ans) => {
-    if(ans===undefined) return ans;
     this._map.set(k, ans);
     if(this._map.size>this._cap) this.evict();
     return ans;
@@ -67,11 +68,6 @@ _.clear = function() {
   return this._src.clear();
 };
 
-_.forEach = function(fn, thisArg) {
-  if(this._map.size===this._size) return this._map.forEach(fn, thisArg);
-  return this.flush().then(() => this._src.forEach(fn, thisArg));
-};
-
 _.valueOf = function() {
   if(this._map.size===this._size) return Promise.resolve(this._map);
   this.flush().then(() => this._src.valueOf().then((ans) => {
@@ -79,6 +75,10 @@ _.valueOf = function() {
     this._size = ans.size;
     return ans;
   }));
+};
+
+_.forEach = function(fn, thisArg) {
+  return this.valueOf().then((ans) => ans.forEach(fn, thisArg));
 };
 
 _.entries = function() {
