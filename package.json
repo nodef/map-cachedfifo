@@ -1,6 +1,6 @@
 {
   "name": "map-cachedfifo",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "FIFO Cached interface for a Promised Map.",
   "main": "index.js",
   "scripts": {
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/wolfram77/node-mapcachedfifo/issues"
   },
-  "homepage": "https://github.com/wolfram77/node-mapcachedfifo#readme"
+  "homepage": "https://github.com/wolfram77/node-mapcachedfifo#readme",
+  "devDependencies": {
+    "map-promised": "0.0.5"
+  }
 }
