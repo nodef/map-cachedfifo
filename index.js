@@ -39,8 +39,8 @@ _.evict = function(n) {
 _.set = function(k, v) {
   this._map.set(k, v);
   this._set.set(k, v);
-  if(this._map.size>=this._cap) this.evict();
-  if(this._set.size>=this._buf) this.flush();
+  if(this._map.size>this._cap) this.evict();
+  if(this._set.size>this._buf) this.flush();
   return Promise.resolve(v);
 };
 
