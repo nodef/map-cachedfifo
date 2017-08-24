@@ -6,6 +6,7 @@ var $ = function MapCachedFifo(src, cap, evict) {
   this._evict = evict||0.5;
   this._map = new Map();
   this._set = new Map();
+  this._und = new Set();
 };
 module.exports = $;
 
@@ -33,21 +34,35 @@ _.evict = function(n) {
     this._map.delete(k);
     if(++i>=I) break;
   }
+  this._und.clear();
   return Promise.resolve(i);
 };
 
 _.set = function(k, v) {
-  this._map.set(k, v);
+  var x = this._map.get(k);
+  if(v===undefined) {
+    this._map.delete(k);
+    this._und.add(k);
+  }
+  else {
+    this._map.set(k, v);
+    this._und.delete(k);
+  }
   this._set.set(k, v);
+  var dnum = (x===undefined? 1 : 0) - (v===undefined? 1 : 0);
+  this._size = this._map.size====this._size? this._size+dnum : -1;
   if(this._map.size>this._cap) this.evict();
   if(this._set.size>this._buf) this.flush();
   return Promise.resolve(v);
 };
 
 _.get = function(k) {
-  if(this._map.has(k) || this._map.size===this._size) return Promise.resolve(this._map.get(k));
+  var v = this._map.get(k);
+  if(v!==undefined) return Promise.resolve(v);
+  if(this._und.has(k) || this._map.size===this._size) return Promise.resolve();
   return this._src.get(k).then((ans) => {
-    this._map.set(k, ans);
+    if(ans===undefined) this._und.add(k);
+    else this._map.set(k, ans);
     if(this._map.size>this._cap) this.evict();
     return ans;
   });
