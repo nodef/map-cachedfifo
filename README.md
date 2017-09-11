@@ -6,7 +6,7 @@ FIFO Cached interface for a Promised Map.
 
 ```javascript
 var MapCachedFifo = require('map-cachedfifo');
-// MapCachedFifo(<source>, <cache>=1024, <evict>=0.5)
+// MapCachedFifo(<source>, [<cache>], [<evict>])
 // source: a promised map, like MapPg (map-pg)
 // cache:  size of get and set cache, evicts and flushes when full (default 1024)
 // evict:  fraction of get cache to evict when full (default 0.5)
