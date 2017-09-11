@@ -1,4 +1,5 @@
-var $ = function MapCachedFifo(src, cap, evict) {
+'use strict';
+const $ = function MapCachedFifo(src, cap, evict) {
   this._src = src;
   this._size = -1;
   this._num = 0;
@@ -10,15 +11,15 @@ var $ = function MapCachedFifo(src, cap, evict) {
 };
 module.exports = $;
 
-var _ = $.prototype;
+const _ = $.prototype;
 
 Object.defineProperty(_, 'size', {'get': function() {
   if(this._size>=0) return Promise.resolve(this._size);
   return this.flush().then(() => this._src.size).then((ans) => this._size = ans);
 }});
 
-_.flush = function() {
-  var a = [], I = n||this._set.size;
+_.flush = function(n) {
+  const a = [], I = n||this._set.size;
   for(var [k, v] of this._set) {
     a.push(v===undefined? this._src.delete(k) : this._src.set(k, v));
     if(++i>=I) break;
@@ -39,10 +40,10 @@ _.evict = function(n) {
 };
 
 _.set = function(k, v) {
-  var x = this._map.get(k);
+  const x = this._map.get(k);
   this._map.set(k, v);
   this._set.set(k, v);
-  var dnum = (x===undefined? 1 : 0) - (v===undefined? 1 : 0);
+  const dnum = (x===undefined? 1 : 0) - (v===undefined? 1 : 0);
   this._size = this._num===this._size? this._size+dnum : -1;
   this._num += dnum;
   if(this._map.size>this._cap) this.evict();
