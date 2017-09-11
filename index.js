@@ -19,7 +19,7 @@ Object.defineProperty(_, 'size', {'get': function() {
 }});
 
 _.flush = function(n) {
-  const a = [], I = n||this._set.size;
+  var a = [], i = 0, I = n||this._set.size;
   for(var [k, v] of this._set) {
     a.push(v===undefined? this._src.delete(k) : this._src.set(k, v));
     if(++i>=I) break;
