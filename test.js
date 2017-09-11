@@ -1,10 +1,12 @@
 var assert = require('assert');
 var MapPromised = require('map-promised');
-var MapCached = require('map-cachedfifo');
+var MapCachedFifo = require('./');
 
 var mapp = new MapPromised(new Map());
-mapp.set('a', 1);
-new MapCached(mapp, 2).then((mapc) => {
+var mapc = new MapCachedFifo(mapp);
+mapp.setup().then(() => {
+  mapp.set('a', 1);
+}).then(() => {
   mapc.set('b', 2);
   mapc.size.then((ans) => assert.equal(ans, 2));
   mapc.get('b').then((ans) => assert.equal(ans, 2));
