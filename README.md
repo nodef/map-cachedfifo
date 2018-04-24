@@ -1,5 +1,7 @@
 # map-cachedfifo
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/nodef/map-cachedfifo.svg)](https://greenkeeper.io/)
+
 [![NPM](https://nodei.co/npm/map-cachedfifo.png)](https://nodei.co/npm/map-cachedfifo/)
 
 FIFO Cached interface for a Promised Map.
